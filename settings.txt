@@ -1,2 +1,3 @@
 username = destroyerko
 default_quality = source
+livestreamer_path = livestreamer

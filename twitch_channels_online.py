@@ -13,13 +13,18 @@ TWITCHTV = TwitchTV(logging)
 init()
 
 # Read settings data
+# Username
 line = file.readline().split(' = ')
 if line[0] == 'username':
     settings_data = {'username': line[1].replace('\n', '')}
+# Video quality
 line = file.readline().split(' = ')
 if line[0] == 'default_quality':
     settings_data['default_quality'] = line[1].replace('\n', '')
-
+# Livestreamer's path
+line = file.readline().split(' = ')
+if line[0] == 'livestreamer_path':
+    settings_data['livestreamer_path'] = line[1].replace('\n', '')
 
 def checkChannels():
     print settings_data
@@ -48,7 +53,7 @@ def checkChannels():
         print Fore.YELLOW + online[i].get('channel').get('display_name')
         if online[i].get('channel').get('status') is not None:
             print Fore.CYAN + online[i].get('channel').get('status').encode('ascii', 'ignore')
-        print Fore.BLUE + "Playing: " + online[i].get('channel').get('game')
+            print Fore.BLUE + "Playing: " + online[i].get('channel').get('game')
 
 def help():
     print Fore.YELLOW
@@ -59,9 +64,7 @@ def help():
 
 def startStream(channel, quality):
     print "Starting livestreamer"
-    subprocess.call("H:\Livestreamer\livestreamer.exe twitch.tv/" + channel + " " + quality)
-
-
+    subprocess.call(settings_data.get('livestreamer_path') + " twitch.tv/" + channel + " " + quality)
 
 if __name__ == "__main__":
     checkChannels()
