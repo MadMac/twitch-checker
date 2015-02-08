@@ -13,3 +13,7 @@ livestreamer_path - Path to livestreamer. Can be just "livestreamer" if in PATH 
 * help
 * show
 * play channel_name (quality)
+
+## Requirements
+* Colorama
+* [python-twitch](https://github.com/ingwinlu/python-twitch/)
