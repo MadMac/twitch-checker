@@ -5,7 +5,9 @@ Can also be used to start livestreamer.
 
 ## Settings -file
 Username - twitch username
+
 default_quality - Default quality to start livestreamer
+
 livestreamer_path - Path to livestreamer. Can be just "livestreamer" if in PATH or using linux
 
 ## Commands
