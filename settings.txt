@@ -1,1 +1,2 @@
 username = destroyerko
+default_quality = source

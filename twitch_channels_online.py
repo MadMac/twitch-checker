@@ -1,5 +1,6 @@
 from twitch import *
 import unicodedata, logging
+import subprocess
 from colorama import init, Fore, Back, Style
 
 filename = "settings.txt"
@@ -15,6 +16,9 @@ init()
 line = file.readline().split(' = ')
 if line[0] == 'username':
     settings_data = {'username': line[1].replace('\n', '')}
+line = file.readline().split(' = ')
+if line[0] == 'default_quality':
+    settings_data['default_quality'] = line[1].replace('\n', '')
 
 
 def checkChannels():
@@ -42,7 +46,8 @@ def checkChannels():
     print Back.RESET + Fore.YELLOW
     for i in range(0, len(online)):
         print Fore.YELLOW + online[i].get('channel').get('display_name')
-        print Fore.CYAN + online[i].get('channel').get('status').encode('ascii', 'ignore')
+        if online[i].get('channel').get('status') is not None:
+            print Fore.CYAN + online[i].get('channel').get('status').encode('ascii', 'ignore')
         print Fore.BLUE + "Playing: " + online[i].get('channel').get('game')
 
 def help():
@@ -50,6 +55,12 @@ def help():
     print "## HELP ##"
     print "quit, Quit - Close"
     print "show - Shows status of all the channels"
+    print "play channel_name (quality) - Starts livestreamer"
+
+def startStream(channel, quality):
+    print "Starting livestreamer"
+    subprocess.call("H:\Livestreamer\livestreamer.exe twitch.tv/" + channel + " " + quality)
+
 
 
 if __name__ == "__main__":
@@ -65,3 +76,8 @@ if __name__ == "__main__":
             help()
         elif input == 'show':
             checkChannels()
+        elif input.split(' ')[0] == 'play':
+            if len(input.split(' ')) == 2:
+                startStream(input.split(' ')[1], settings_data.get('default_quality'))
+            else:
+                startStream(input.split(' ')[1], input.split(' ')[2])
