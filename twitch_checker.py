@@ -79,11 +79,9 @@ def keepUpdating(updateTime):
             break
         time.sleep(1)
         timesLooped += 1
-        print timesLooped
-        print (updateTime*60)
         if timesLooped >= updateTime*60:
             checkChannels()
-            timeLooped = 0
+            timesLooped = 0
     
 if __name__ == "__main__":
     checkChannels()
