@@ -1,6 +1,6 @@
 from twitch import *
 import unicodedata, logging
-import subprocess
+import subprocess, thread, time
 from colorama import init, Fore, Back, Style
 
 filename = "settings.txt"
@@ -66,6 +66,25 @@ def startStream(channel, quality):
     print "Starting livestreamer"
     subprocess.call(settings_data.get('livestreamer_path') + " twitch.tv/" + channel + " " + quality)
 
+def getInput(iArray):
+    raw_input()
+    iArray.append(None)
+
+def keepUpdating(updateTime):
+    iArray = []
+    thread.start_new_thread(getInput, (iArray,))
+    timesLooped = 0
+    while 1:
+        if iArray:
+            break
+        time.sleep(1)
+        timesLooped += 1
+        print timesLooped
+        print (updateTime*60)
+        if timesLooped >= updateTime*60:
+            checkChannels()
+            timeLooped = 0
+    
 if __name__ == "__main__":
     checkChannels()
     input = ''
@@ -84,3 +103,8 @@ if __name__ == "__main__":
                 startStream(input.split(' ')[1], settings_data.get('default_quality'))
             else:
                 startStream(input.split(' ')[1], input.split(' ')[2])
+        elif input.split(' ')[0] == 'update':
+            if len(input.split(' ')) == 2:
+                keepUpdating(float(input.split(' ')[1]))
+            else:
+                print "Not enough parameters! update (time between updates in minutes)"
