@@ -79,6 +79,13 @@ def getInput(iArray):
   raw_input()
   iArray.append(None)
 
+def check_channel(channel_name):
+    try:
+        channel = TWITCHTV.getLiveStream(channel_name, 0)
+        print Fore.BLUE + "Online"
+    except:
+        print Fore.RED + "Offline"
+
 
 def keepUpdating(updateTime):
   iArray = []
@@ -118,3 +125,8 @@ if __name__ == "__main__":
         keepUpdating(float(input.split(' ')[1]))
       else:
         print "Not enough parameters! update (time between updates in minutes)"
+    elif input.split(' ')[0] == 'check':
+      if len(input.split(' ')) == 2:
+        check_channel(input.split(' ')[1])
+      else:
+        print "Not enough parameters! check (name of the channel)"
