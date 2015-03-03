@@ -19,6 +19,9 @@ file = open(filename)
 
 TWITCHTV = TwitchTV(logging)
 
+online = None
+offline = None
+
 # Initialize colorama
 
 init()
@@ -131,7 +134,11 @@ def updateFunc(updateButton, OnlineBox, OfflineBox, selected):
     updateText = Tkinter.Label(root, text='Updating...')
     updateText.pack()
     updateButton.config(state="disabled")
+
     selected = None
+    global online
+    global offline
+
     root.update_idletasks()
 
     print settings_data
@@ -155,7 +162,7 @@ def updateFunc(updateButton, OnlineBox, OfflineBox, selected):
 
     for i in range(0, len(online)):
         if online[i].get('channel').get('status') is not None:
-            OnlineBox.insert(i, online[i].get('channel'
+            OnlineBox.insert(i+1, online[i].get('channel'
                              ).get('display_name'))
 
     for i in range(0, len(offline)):
@@ -166,22 +173,25 @@ def updateFunc(updateButton, OnlineBox, OfflineBox, selected):
 
     return
 
-def checkIfChannelSelected(OnlineBox, selected, watchButton):
+def checkIfChannelSelected(OnlineBox, selected, watchButton, titleText):
     if OnlineBox.size() > 0:
-        selected = OnlineBox.index("active")
-
-    if selected != None:
+        selected[0] = OnlineBox.index("active")
+    #print selected[0]
+    if selected[0] != None:
         watchButton.config(state="normal")
+        titleText.config(text=online[selected[0]].get('channel').get('name') + '\n\n' + online[selected[0]].get('channel').get('status'
+                ).encode('ascii', 'ignore') + '\n' + 'Playing: ' + online[selected[0]].get('channel'
+                        ).get('game'))
     else:
         watchButton.config(state="disabled")
 
 
-    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selected, watchButton))
+    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selected, watchButton, titleText))
 
 
 if __name__ == '__main__':
 
-    selectedChannel = None
+    selectedChannel = [None]
 
     root.title('Twitch')
     root.minsize(300, 500)
@@ -201,22 +211,25 @@ if __name__ == '__main__':
     OfflineText.place(x=10, y=200)
 
     OfflineBox = Tkinter.Listbox(root)
-    OfflineBox.insert(1, 'Dansgaming')
     OfflineBox.pack()
     OfflineBox.place(x=10, y=220)
 
     updateButton = Tkinter.Button(root, text='Update', command=lambda : \
                                   updateFunc(updateButton, OnlineBox, OfflineBox, selectedChannel))
     updateButton.pack()
-    updateButton.place(x=200, y=10)
+    updateButton.place(x=200, y=30)
 
     channelButton = Tkinter.Button(root, text='Channel')
     channelButton.pack()
-    channelButton.place(x=200, y=40)
+    channelButton.place(x=200, y=60)
 
-    watchButton = Tkinter.Button(root, text='Watch', command=lambda: startStream("Sevadus", "source"))
+    watchButton = Tkinter.Button(root, text='Watch', command=lambda: startStream(online[selectedChannel[0]].get('channel').get('name'), "source"))
     watchButton.pack()
-    watchButton.place(x=200, y=70)
+    watchButton.place(x=200, y=90)
 
-    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selectedChannel, watchButton))
+    titleText = Tkinter.Label(root, text='', anchor='w', justify='left', wraplength=250)
+    titleText.pack()
+    titleText.place(x=10, y=400)
+
+    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selectedChannel, watchButton, titleText))
     root.mainloop()
