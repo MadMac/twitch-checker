@@ -7,6 +7,10 @@ import time
 import datetime
 from colorama import init, Fore, Back, Style
 
+import Tkinter
+
+root = Tkinter.Tk()
+
 filename = "settings.txt"
 following = []
 file = open(filename)
@@ -79,12 +83,13 @@ def getInput(iArray):
   raw_input()
   iArray.append(None)
 
+
 def check_channel(channel_name):
-    try:
-        channel = TWITCHTV.getLiveStream(channel_name, 0)
-        print Fore.BLUE + "Online"
-    except:
-        print Fore.RED + "Offline"
+  try:
+    channel = TWITCHTV.getLiveStream(channel_name, 0)
+    print Fore.BLUE + "Online"
+  except:
+    print Fore.RED + "Offline"
 
 
 def keepUpdating(updateTime):
@@ -103,6 +108,34 @@ def keepUpdating(updateTime):
       timesLooped = 0
 
 if __name__ == "__main__":
+
+  root.title("Twitch")
+  root.minsize(300, 500)
+  root.maxsize(300, 500)
+  root.geometry('%dx%d+%d+%d' % (300, 500, 200, 200))
+
+  OnlineText = Tkinter.Label(root, text="Online")
+  OnlineText.pack()
+  OnlineText.place(x=10, y=10)
+
+  OnlineBox = Tkinter.Listbox(root)
+  OnlineBox.insert(1, "Dansgaming")
+  OnlineBox.pack()
+  OnlineBox.place(x=10, y=30)
+
+  updateButton = Tkinter.Button(root, text="Update")
+  updateButton.pack()
+  updateButton.place(x=200, y=10)
+
+  updateButton = Tkinter.Button(root, text="Check")
+  updateButton.pack()
+  updateButton.place(x=200, y=40)
+
+
+  root.mainloop()
+
+
+'''
   checkChannels()
   input = ''
   help()
@@ -117,7 +150,8 @@ if __name__ == "__main__":
       checkChannels()
     elif input.split(' ')[0] == 'play':
       if len(input.split(' ')) == 2:
-        startStream(input.split(' ')[1], settings_data.get('default_quality'))
+        startStream(
+            input.split(' ')[1], settings_data.get('default_quality'))
       else:
         startStream(input.split(' ')[1], input.split(' ')[2])
     elif input.split(' ')[0] == 'update':
@@ -130,3 +164,4 @@ if __name__ == "__main__":
         check_channel(input.split(' ')[1])
       else:
         print "Not enough parameters! check (name of the channel)"
+        '''
