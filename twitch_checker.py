@@ -92,7 +92,7 @@ def help():
 
 def startStream(channel, quality):
     print 'Starting livestreamer'
-    subprocess.call(settings_data.get('livestreamer_path')
+    subprocess.Popen(settings_data.get('livestreamer_path')
                     + ' twitch.tv/' + channel + ' ' + quality)
 
 
@@ -126,11 +126,12 @@ def keepUpdating(updateTime):
             timesLooped = 0
 
 
-def updateFunc(updateButton, OnlineBox, OfflineBox):
+def updateFunc(updateButton, OnlineBox, OfflineBox, selected):
 
     updateText = Tkinter.Label(root, text='Updating...')
     updateText.pack()
     updateButton.config(state="disabled")
+    selected = None
     root.update_idletasks()
 
     print settings_data
@@ -165,8 +166,22 @@ def updateFunc(updateButton, OnlineBox, OfflineBox):
 
     return
 
+def checkIfChannelSelected(OnlineBox, selected, watchButton):
+    if OnlineBox.size() > 0:
+        selected = OnlineBox.index("active")
+
+    if selected != None:
+        watchButton.config(state="normal")
+    else:
+        watchButton.config(state="disabled")
+
+
+    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selected, watchButton))
+
 
 if __name__ == '__main__':
+
+    selectedChannel = None
 
     root.title('Twitch')
     root.minsize(300, 500)
@@ -178,7 +193,6 @@ if __name__ == '__main__':
     OnlineText.place(x=10, y=10)
 
     OnlineBox = Tkinter.Listbox(root)
-    OnlineBox.insert(1, 'Dansgaming')
     OnlineBox.pack()
     OnlineBox.place(x=10, y=30)
 
@@ -192,7 +206,7 @@ if __name__ == '__main__':
     OfflineBox.place(x=10, y=220)
 
     updateButton = Tkinter.Button(root, text='Update', command=lambda : \
-                                  updateFunc(updateButton, OnlineBox, OfflineBox))
+                                  updateFunc(updateButton, OnlineBox, OfflineBox, selectedChannel))
     updateButton.pack()
     updateButton.place(x=200, y=10)
 
@@ -200,4 +214,9 @@ if __name__ == '__main__':
     channelButton.pack()
     channelButton.place(x=200, y=40)
 
+    watchButton = Tkinter.Button(root, text='Watch', command=lambda: startStream("Sevadus", "source"))
+    watchButton.pack()
+    watchButton.place(x=200, y=70)
+
+    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selectedChannel, watchButton))
     root.mainloop()
