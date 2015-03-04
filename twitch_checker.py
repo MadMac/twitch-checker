@@ -8,6 +8,7 @@ import thread
 import time
 import datetime
 import sys
+import webbrowser
 from colorama import init, Fore, Back, Style
 
 import Tkinter
@@ -99,6 +100,10 @@ def startStream(channel, quality):
     subprocess.Popen(settings_data.get('livestreamer_path')
                     + ' twitch.tv/' + channel + ' ' + quality)
 
+def startUrl(channel):
+    url = 'http://www.twitch.tv/' + channel
+    webbrowser.open_new(url)
+
 
 def getInput(iArray):
     raw_input()
@@ -174,20 +179,22 @@ def updateFunc(updateButton, OnlineBox, OfflineBox, selected, updateTime):
     updateText.pack_forget()
     updateButton.config(state="normal")
 
-def checkIfChannelSelected(OnlineBox, selected, watchButton, titleText):
+def checkIfChannelSelected(OnlineBox, selected, watchButton, urlButton, titleText):
     if OnlineBox.size() > 0:
         selected[0] = OnlineBox.index("active")
     #print selected[0]
     if selected[0] != None:
         watchButton.config(state="normal")
+        urlButton.config(state="normal")
         titleText.config(text=online[selected[0]].get('channel').get('name') + '\n\n' + online[selected[0]].get('channel').get('status' \
                 ).encode('ascii', 'ignore') + '\n' + 'Playing: ' + online[selected[0]].get('channel'
                         ).get('game'))
     else:
         watchButton.config(state="disabled")
+        urlButton.config(state="disabled")
 
 
-    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selected, watchButton, titleText))
+    root.after(100, lambda: checkIfChannelSelected(OnlineBox, selected, watchButton, urlButton, titleText))
 
 
 if __name__ == '__main__':
@@ -263,13 +270,20 @@ if __name__ == '__main__':
         watchButton.pack()
         watchButton.place(x=190, y=130)
 
+        urlButton = Tkinter.Button(root, text='Twitch.tv', command=lambda: startUrl(online[selectedChannel[0]].get('channel').get('name')))
+        urlButton.config(font="default 12", width=7)
+        urlButton.pack()
+        urlButton.place(x=190, y=180)
+
         titleText = Tkinter.Label(root, text='', anchor='w', justify='left', wraplength=250)
         titleText.pack()
         titleText.place(x=10, y=400)
 
         updateTime = Tkinter.Label(root, text='', wraplength=80)
         updateTime.pack()
-        updateTime.place(x=190, y=180)
+        updateTime.place(x=190, y=230)
 
-        root.after(100, lambda: checkIfChannelSelected(OnlineBox, selectedChannel, watchButton, titleText))
+        root.update_idletasks()
+        updateFunc(updateButton, OnlineBox, OfflineBox, selectedChannel, updateTime)
+        root.after(100, lambda: checkIfChannelSelected(OnlineBox, selectedChannel, watchButton, urlButton, titleText))
         root.mainloop()
