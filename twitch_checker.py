@@ -97,8 +97,7 @@ def help():
 
 def startStream(channel, quality):
     print 'Starting livestreamer'
-    subprocess.Popen(settings_data.get('livestreamer_path')
-                    + ' twitch.tv/' + channel + ' ' + quality)
+    subprocess.Popen([settings_data.get('livestreamer_path'), 'twitch.tv/' + channel, quality])
 
 def startUrl(channel):
     url = 'http://www.twitch.tv/' + channel
